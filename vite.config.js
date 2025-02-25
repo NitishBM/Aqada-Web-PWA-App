@@ -7,6 +7,10 @@ export default defineConfig({
     vue(),
     VitePWA({
       registerType: 'autoUpdate',
+      devOptions: {
+        enabled: true,
+        type: 'module',
+      },
       manifest: {
         name: 'Aqada',
         short_name: 'MyApp',
@@ -34,8 +38,7 @@ export default defineConfig({
           {
             "src": "/pwa-maskable-512x512.png",
             "sizes": "512x512",
-            "type": "image/png",
-            "purpose": "maskable"
+            "type": "maskable"
           }
         ]
       }

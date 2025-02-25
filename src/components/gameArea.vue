@@ -1,11 +1,8 @@
 <template>
   <div class="h-screen w-screen flex flex-col overflow-hidden">
     <!-- Main Content Start -->
-    <div class="flex-grow flex items-center justify-center">
-      <button @click="openCurrentLink"
-        class="px-4 py-2 bg-gray-900 text-white rounded shadow-lg hover:bg-gray-800 transition">
-        Open {{ gameTitles[curentGame] }}
-      </button>
+    <div class="flex-grow flex items-center justify-center w-full h-full">
+      <iframe :src="gameLinks[currentGame]" class="w-full h-full border-none"></iframe>
     </div>
     <!-- Main Content End -->
 
@@ -24,8 +21,8 @@
         </button>
 
         <!-- Game Name -->
-        <div>
-          {{ gameTitles[curentGame] }}
+        <div class="text-lg font-semibold">
+          {{ gameTitles[currentGame] }}
         </div>
 
         <!-- Next Button -->
@@ -47,7 +44,7 @@ export default {
   name: "GameArea",
   data() {
     return {
-      curentGame: 0, // Start with the first game (index 0)
+      currentGame: 0, // Start with the first game (index 0)
       gameTitles: [
         "Personal Website",
         "Portfolio",
@@ -58,22 +55,16 @@ export default {
         "https://nitishbm.github.io/Personal-Website/",
         "https://nitishbm.github.io/Portfolio/",
         "https://www.facebook.com/",
-        "https://www.google.com/"
+        "https://google.com/index.html"
       ]
     };
   },
   methods: {
     showPreviousGame() {
-      // Navigate to previous game or loop to the last game
-      this.curentGame = (this.curentGame - 1 + this.gameTitles.length) % this.gameTitles.length;
+      this.currentGame = (this.currentGame - 1 + this.gameTitles.length) % this.gameTitles.length;
     },
     showNextGame() {
-      // Navigate to next game or loop to the first game
-      this.curentGame = (this.curentGame + 1) % this.gameTitles.length;
-    },
-    openCurrentLink() {
-      // Open the current game link in a new tab
-      window.open(this.gameLinks[this.curentGame], "_blank");
+      this.currentGame = (this.currentGame + 1) % this.gameTitles.length;
     }
   }
 };
