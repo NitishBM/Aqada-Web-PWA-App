@@ -1,37 +1,46 @@
 <template>
   <div class="h-screen w-screen flex flex-col overflow-hidden">
     <!-- Main Content Start -->
-    <div class="flex-grow flex items-center justify-center w-full h-full">
-      <iframe :src="gameLinks[currentGame]" class="w-full h-full border-none"></iframe>
+    <div class="flex-grow flex items-center justify-center w-full h-full relative overflow-hidden">
+      <transition enter-active-class="transition-transform duration-500 ease-in-out opacity-100"
+        enter-from-class="-translate-y-full opacity-0"
+        leave-active-class="transition-transform duration-500 ease-in-out opacity-100"
+        leave-to-class="translate-y-full opacity-0" mode="out-in">
+        <iframe v-if="games.length" :key="currentGame" :src="games[currentGame].game_url"
+          class="w-full h-full border-none absolute"></iframe>
+      </transition>
     </div>
     <!-- Main Content End -->
 
     <!-- Bottom Content Start -->
-    <hr>
-    <div class="container-fluid mt-auto mb-3 w-full">
+    <hr />
+    <div class="mt-auto mb-3 w-full">
       <div class="flex justify-between items-center px-4">
         <!-- Back Button -->
-        <button @click="showPreviousGame"
-          class="flex justify-center items-center gap-2 px-2 py-2 bg-gray-900 text-white rounded">
+        <button @click="showPreviousGame" class="flex justify-center items-center gap-2 ">
+
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-            stroke="currentColor" class="w-5 h-5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75 12 3m0 0 3.75 3.75M12 3v18" />
+            stroke="currentColor" class="size-10">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="m15 11.25-3-3m0 0-3 3m3-3v7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
           </svg>
-          Back
+
         </button>
 
         <!-- Game Name -->
-        <div class="text-lg font-semibold">
-          {{ gameTitles[currentGame] }}
+        <div class="text-lg font-semibold" v-if="games.length">
+          {{ games[currentGame].game_type_name }}
         </div>
 
         <!-- Next Button -->
-        <button @click="showNextGame" class="flex justify-center items-center gap-2 p-2 bg-gray-900 text-white rounded">
+        <button @click="showNextGame" class="flex justify-center items-center gap-2">
+
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-            stroke="currentColor" class="w-5 h-5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25 12 21m0 0-3.75-3.75M12 21V3" />
+            stroke="currentColor" class="size-10">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="m9 12.75 3 3m0 0 3-3m-3 3v-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
           </svg>
-          Next
+
         </button>
       </div>
     </div>
@@ -40,31 +49,37 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "GameArea",
   data() {
     return {
-      currentGame: 0, // Start with the first game (index 0)
-      gameTitles: [
-        "Personal Website",
-        "Portfolio",
-        "Facebook",
-        "Google"
-      ],
-      gameLinks: [
-        "https://nitishbm.github.io/Personal-Website/",
-        "https://nitishbm.github.io/Portfolio/",
-        "https://www.facebook.com/",
-        "https://google.com/index.html"
-      ]
+      currentGame: 0,
+      games: []
     };
   },
+  async mounted() {
+    await this.fetchGames();
+  },
   methods: {
+    async fetchGames() {
+      try {
+        const response = await axios.get("http://localhost:5000/games");
+        if (response.data && response.data.length) {
+          this.games = response.data;
+        } else {
+          console.error("No games found in API response.");
+        }
+      } catch (error) {
+        console.error("Error fetching games:", error);
+      }
+    },
     showPreviousGame() {
-      this.currentGame = (this.currentGame - 1 + this.gameTitles.length) % this.gameTitles.length;
+      this.currentGame = (this.currentGame - 1 + this.games.length) % this.games.length;
     },
     showNextGame() {
-      this.currentGame = (this.currentGame + 1) % this.gameTitles.length;
+      this.currentGame = (this.currentGame + 1) % this.games.length;
     }
   }
 };
