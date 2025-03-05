@@ -50,6 +50,7 @@
 
 <script>
 import axios from "axios";
+import Cookies from "js-cookie";
 
 export default {
   name: "GameArea",
@@ -62,12 +63,21 @@ export default {
   async mounted() {
     await this.fetchGames();
   },
+  watch: {
+    currentGame(newIndex, oldIndex) {
+      if (this.games.length > 0) {
+        this.updateGameStatus(oldIndex, "inactive"); // Mark previous game as inactive
+        this.updateGameStatus(newIndex, "active"); // Mark new game as active
+      }
+    }
+  },
   methods: {
     async fetchGames() {
       try {
         const response = await axios.get("http://localhost:5000/games");
         if (response.data && response.data.length) {
           this.games = response.data;
+          this.updateGameStatus(this.currentGame, "active"); // Set first game as active
         } else {
           console.error("No games found in API response.");
         }
@@ -75,11 +85,23 @@ export default {
         console.error("Error fetching games:", error);
       }
     },
+    updateGameStatus(index, status) {
+      if (this.games.length > 0 && this.games[index]) {
+        const gameId = this.games[index]._id; // Get the _id of the game
+        Cookies.set("_id", gameId, { expires: 7, path: "/" });
+        Cookies.set("gameStatus", status, { expires: 7, path: "/" }); // Store game status in cookies
+        console.log(`Stored game ID: ${gameId} with status: ${status}`);
+      }
+    },
     showPreviousGame() {
+      const oldIndex = this.currentGame;
       this.currentGame = (this.currentGame - 1 + this.games.length) % this.games.length;
+      this.updateGameStatus(oldIndex, "inactive"); // Update previous game to inactive
     },
     showNextGame() {
+      const oldIndex = this.currentGame;
       this.currentGame = (this.currentGame + 1) % this.games.length;
+      this.updateGameStatus(oldIndex, "inactive"); // Update previous game to inactive
     }
   }
 };
