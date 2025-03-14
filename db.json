@@ -30,10 +30,10 @@
       },
       "_id": "67b5dd298238d837c30fc50c",
       "game_type_id": "64b5c5d8c8c4c5f8a9dcb124",
-      "game_type_name": "PUZZLE",
+      "game_type_name": "Quiz Game",
       "game_level": "2",
-      "game_url": "https://example.com/puzzle-game",
-      "publisher_name": "Puzzle World",
+      "game_url": "http://localhost:5173/",
+      "publisher_name": "Quiz Game",
       "publish_date_time": "2025-02-01T12:30:00.000Z"
     },
     {
